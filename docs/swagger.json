@@ -1,0 +1,242 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "High-performance telemetry receiver with InfluxDB storage.",
+        "title": "CloakApp Telemetry Receiver API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {
+        "/admin/api/data": {
+            "get": {
+                "description": "Retrieve the latest telemetry data from InfluxDB",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Get telemetry data",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/handlers.TelemetryRow"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/api/keys": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API Keys"
+                ],
+                "summary": "List API keys",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/db.APIKey"
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "API Keys"
+                ],
+                "summary": "Generate API key",
+                "parameters": [
+                    {
+                        "description": "Key Label",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.CreateKeyRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/admin/api/keys/{key}": {
+            "delete": {
+                "tags": [
+                    "API Keys"
+                ],
+                "summary": "Delete API key",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "API Key",
+                        "name": "key",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/telemetry": {
+            "post": {
+                "description": "Receive telemetry data from frontend scripts and store in InfluxDB",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Telemetry"
+                ],
+                "summary": "Receive telemetry data",
+                "parameters": [
+                    {
+                        "description": "Telemetry Data",
+                        "name": "telemetry",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/handlers.TelemetryRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "db.APIKey": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "key": {
+                    "type": "string"
+                },
+                "label": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.CreateKeyRequest": {
+            "type": "object",
+            "required": [
+                "label"
+            ],
+            "properties": {
+                "label": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.TelemetryRequest": {
+            "type": "object",
+            "required": [
+                "data",
+                "full_url",
+                "host",
+                "package"
+            ],
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "full_url": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "package": {
+                    "type": "string"
+                }
+            }
+        },
+        "handlers.TelemetryRow": {
+            "type": "object",
+            "properties": {
+                "fields": {
+                    "type": "object",
+                    "additionalProperties": true
+                },
+                "full_url": {
+                    "type": "string"
+                },
+                "host": {
+                    "type": "string"
+                },
+                "ip": {
+                    "type": "string"
+                },
+                "package": {
+                    "type": "string"
+                },
+                "time": {
+                    "type": "string"
+                },
+                "user_agent": {
+                    "type": "string"
+                }
+            }
+        }
+    },
+    "securityDefinitions": {
+        "ApiKeyAuth": {
+            "type": "apiKey",
+            "name": "X-API-Key",
+            "in": "header"
+        }
+    }
+}

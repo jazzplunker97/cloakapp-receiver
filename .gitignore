@@ -1,0 +1,22 @@
+# Binaries
+receiver
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Environment variables
+.env
+
+# API Keys store
+keys.json
+
+# Dependencies
+vendor/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo

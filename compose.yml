@@ -1,0 +1,28 @@
+services:
+  receiver:
+    build: .
+    ports:
+      - "${PORT:-8080}:${PORT:-8080}"
+    env_file:
+      - .env
+    depends_on:
+      - influxdb
+
+  influxdb:
+    image: docker.io/library/influxdb:2.7-alpine
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=password12345
+      - DOCKER_INFLUXDB_INIT_ORG=my-org
+      - DOCKER_INFLUXDB_INIT_BUCKET=telemetry-bucket
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=my-super-secret-auth-token
+    # Note: InfluxDB init vars are kept in environment for the first-run setup,
+    # but the receiver will pull its connection details from .env
+    volumes:
+      - influxdb-data:/var/lib/influxdb2
+
+volumes:
+  influxdb-data:
