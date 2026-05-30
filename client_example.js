@@ -10,8 +10,6 @@ function sendTelemetry(telemetryData) {
     };
 
     fetch(url, {
-...
-
         headers: {
             'Content-Type': 'application/json'
         },
