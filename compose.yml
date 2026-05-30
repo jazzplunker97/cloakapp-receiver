@@ -1,8 +1,6 @@
 services:
   receiver:
     build: .
-    ports:
-      - "${PORT:-8080}:${PORT:-8080}"
     env_file:
       - .env
     depends_on:
@@ -12,8 +10,6 @@ services:
 
   influxdb:
     image: docker.io/library/influxdb:2.7-alpine
-    ports:
-      - "8086:8086"
     env_file:
       - .env
     volumes:
